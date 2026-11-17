@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#075e45">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="PfandTascherl">
+  <meta name="description" content="PfandTascherl 4.0 – digitale Pfandguthaben-Demo mit automatischen Spenden, Zielen, Community, Auszahlungen und Automatensuche.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
+  <title>PfandTascherl 4.0 · Demo</title>
+  <style>
+    :root{--green:#087657;--dark:#103e32;--deep:#07533e;--muted:#71857a;--line:#e7eee9;--soft:#edf7f0;--white:#fff;--bg:#f5f8f5}
+    *{box-sizing:border-box}
+    html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#193c30;font-size:15px}
+    button,input{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible{outline:3px solid #75ca9c;outline-offset:2px}
+    .app{max-width:540px;margin:0 auto;padding:calc(19px + env(safe-area-inset-top)) 17px calc(110px + env(safe-area-inset-bottom));min-height:100vh}
+    header{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:0 0 24px}h1{margin:0;font-size:26px;letter-spacing:-.8px}h2{font-size:20px;letter-spacing:-.35px;margin:0 0 10px}h3{font-size:16px;margin:0 0 8px}
+    p{line-height:1.48}.sub{color:var(--muted);font-size:13px;line-height:1.5}.tiny{color:var(--muted);font-size:12px;line-height:1.5}.tag{font-size:12px;font-weight:700;color:var(--deep);background:#e4f1e8;border-radius:99px;padding:8px 12px;white-space:nowrap}
+    .hero{background:linear-gradient(135deg,#0b8260,#07503f);color:#fff;border-radius:25px;padding:25px 24px;box-shadow:0 13px 28px #034c3e20;overflow:hidden;position:relative}.hero::after{content:'♻';font-size:142px;position:absolute;right:-18px;top:-36px;opacity:.085;pointer-events:none}
+    .hero small{font-size:13px;color:#d6f3e5}.amount{font-size:46px;font-weight:800;letter-spacing:-1.5px;line-height:1.4;margin:7px 0}.hero-footer{font-size:13px;color:#d0e9df}
+    .card{background:#fff;border:1px solid #edf2ef;padding:20px;border-radius:21px;margin-top:16px;box-shadow:0 3px 15px #233e2f06}.card p:first-child{margin-top:0}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}.stack{display:grid;gap:11px}.stat{padding:10px 0;border-bottom:1px solid var(--line)}.stat:last-child{border-bottom:0}.stat strong{font-size:16px}
+    .btn{display:inline-flex;justify-content:center;align-items:center;gap:9px;border:0;width:100%;min-height:49px;border-radius:14px;background:var(--green);color:#fff;font-size:15px;font-weight:750;padding:13px 15px;margin-top:11px}.btn:disabled{background:#a8b6ae;color:#f6f8f6;cursor:not-allowed}.btn.secondary{background:#e8f4ec;color:#086345}.btn.outline{background:#fff;color:var(--green);border:1px solid #c7e4d4}.btn.compact{margin:0;min-height:40px;font-size:13px;width:auto;padding:9px 13px}.btn.danger{background:#fff3f1;color:#ae3425}
+    .label{display:block;font-weight:650;font-size:13px;margin:17px 0 7px}.input{width:100%;height:51px;border:1px solid #d3e3d9;background:#fff;border-radius:12px;padding:13px 14px;font-size:17px;color:#143d2d;outline:none}.input:focus{border-color:#087657;box-shadow:0 0 0 3px #c9f0d8}.input::placeholder{color:#9daea4}.input:disabled{background:#eef3ef}
+    .cause{display:flex;align-items:center;gap:13px;width:100%;background:#fff;border:1.5px solid #e0eae2;border-radius:15px;padding:12px;text-align:left;margin:9px 0;color:#153d2e}.cause.selected{border-color:var(--green);background:#f1faf4;box-shadow:0 0 0 2px #d6efde}.cause-icon{font-size:23px;display:flex;align-items:center;justify-content:center;flex:0 0 46px;height:46px;background:#eef6ef;border-radius:13px}.cause-info{flex:1;min-width:0}.cause-info strong{display:block;font-size:14px;margin-bottom:3px}.cause-info small{display:block;color:var(--muted);line-height:1.3}.check{font-size:18px;color:var(--green)}
+    .quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0 4px}.quick button{border:1px solid #d8e7db;border-radius:11px;background:#f1f7f2;color:#176748;min-height:41px;padding:7px 2px;font-weight:700;font-size:13px}
+    .balance-chip{border-radius:12px;background:#eef7f0;color:#245a43;padding:12px 14px;font-size:14px;margin:14px 0}.balance-chip strong{color:#0a5840}.notice{padding:13px 14px;background:#fff8e7;border:1px solid #f1e3b7;border-radius:13px;color:#7a5e25;line-height:1.45;font-size:12px;margin-top:17px}.success{padding:13px 15px;border-radius:12px;background:#ecf8ee;color:#135738;font-size:13px;line-height:1.4;margin-top:12px}
+    .event{display:flex;gap:11px;align-items:flex-start;padding:14px 0;border-bottom:1px solid #e9eee9}.event:last-child{border-bottom:0}.event-icon{font-size:21px;width:30px;text-align:center}.event-body{min-width:0;flex:1}.event-body strong{display:block;font-size:14px;font-weight:650;line-height:1.4}.event-body small{color:var(--muted);display:block;line-height:1.45;margin-top:4px}.event-amount{font-size:14px;font-weight:750;white-space:nowrap}.plus{color:#087a4f}.minus{color:#855846}
+    .nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e0e9e2;padding:8px 9px max(8px,env(safe-area-inset-bottom));z-index:3;box-shadow:0 -5px 22px #113b2610}.nav-inner{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));max-width:540px;margin:auto}.nav button{color:#7c8d83;border:0;background:none;border-radius:12px;padding:5px 3px 3px;min-height:51px;font-size:11px;font-weight:650}.nav button span{display:block;font-size:22px;line-height:1.3;margin-bottom:3px}.nav button.active{color:var(--green);background:#ebf6ee}
+    [hidden]{display:none!important}#video{width:100%;max-height:340px;object-fit:cover;background:#21382b;border-radius:14px;margin:10px 0}.toast{position:fixed;top:max(14px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);padding:12px 17px;background:#163e30;border-radius:13px;color:#fff;font-size:13px;font-weight:650;text-align:center;box-shadow:0 6px 21px #1b3e2d2c;z-index:6;display:none}.muted-sep{border:0;border-top:1px solid var(--line);margin:21px 0}.nowrap{white-space:nowrap}
+    @media(max-width:390px){.amount{font-size:41px}.app{padding-left:13px;padding-right:13px}.card{padding:17px}.quick{gap:6px}}
+    @media(prefers-reduced-motion:no-preference){.btn,.cause,.nav button{transition:background .14s,border-color .14s}}
+
+    .nav-inner{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .places-map{height:295px;width:100%;background:#e9f2ec;border:1px solid #d9e7dd;border-radius:17px;overflow:hidden;margin:13px 0 9px;position:relative}
+    .place-card{border:1px solid #e2ede4;border-radius:15px;padding:14px;margin:10px 0;background:#fff}
+    .place-card.nearest{background:#f1faf3;border-color:#8fcda6}
+    .place-number{font-weight:800;font-size:13px;color:#116b4c;background:#e4f3e9;border-radius:100px;padding:5px 10px;white-space:nowrap}
+    .place-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+    .place-actions a{display:inline-flex;align-items:center;justify-content:center;border-radius:10px;min-height:37px;text-decoration:none;padding:8px 12px;color:#096344;background:#e6f4eb;font-size:13px;font-weight:750}
+    .places-status{background:#f1f7f3;border:1px solid #e1eee4;color:#34604c;padding:12px 13px;border-radius:12px;font-size:13px;line-height:1.5;margin:13px 0}
+    .muted-title{color:#365e49;font-size:14px;margin:20px 0 6px}
+    .map-legend{display:flex;gap:15px;flex-wrap:wrap;font-size:12px;color:#466955;margin-bottom:8px}
+    .dot{width:10px;height:10px;display:inline-block;border-radius:100%;margin-right:5px;background:#0a8361}
+    .dot.store{background:#d39935}.dot.you{background:#2865c3}
+    .place-filter{background:#fff;border:1px solid #d3e3d9;border-radius:12px;min-height:46px;padding:10px 12px;font:inherit;color:#224b37;width:100%}
+    .link{color:#087657;text-decoration:underline;text-underline-offset:2px;font-weight:650}
+    @media(max-width:390px){.nav button{font-size:10px}.nav button span{font-size:20px}}
+    .nav-inner{grid-template-columns:repeat(6,minmax(0,1fr))}
+    .nav button{font-size:10px;padding:5px 1px 3px}.nav button span{font-size:20px}
+    .pill{padding:6px 10px;font-size:12px;border:1px solid #cfebda;border-radius:18px;background:#f3fbf6;color:#117153;display:inline-block;font-weight:650}
+    .section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+    .stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .stat-tile{border:1px solid #e8f1e8;background:#f9fcfa;border-radius:15px;padding:14px}
+    .stat-tile span{display:block;color:#698276;font-size:12px;line-height:1.3}.stat-tile strong{display:block;font-size:23px;letter-spacing:-.5px;margin-top:6px}
+    .progress{height:9px;background:#e6eee8;border-radius:99px;overflow:hidden;margin:10px 0 6px}.progress>div{height:100%;background:linear-gradient(90deg,#10a875,#087657);border-radius:99px;transition:width .2s}
+    .goal-item,.campaign-item,.notice-item{border:1px solid var(--line);border-radius:15px;padding:15px;margin-top:11px;background:#fff}
+    .btn.linklike{padding:7px 4px;width:auto;min-height:32px;margin:0;background:transparent;color:var(--green);font-size:13px}
+    .chips{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0}.chip{padding:9px 12px;background:#eff6f1;border:1px solid #d9e8dd;color:#286447;border-radius:30px;font-size:12px;font-weight:650}
+    .chip.active{background:#0d7956;color:white;border-color:#0d7956}
+    .range{width:100%;accent-color:var(--green);min-height:30px}
+    .toggle{display:flex;align-items:center;gap:10px;padding:12px 0}.toggle input{width:20px;height:20px;accent-color:#087657}
+    .divider-label{font-size:12px;color:#657e70;font-weight:750;text-transform:uppercase;letter-spacing:.05em;margin:18px 0 8px}
+    .modal{position:fixed;inset:0;z-index:20;background:#102c23a1;display:flex;align-items:center;justify-content:center;padding:15px}
+    .modal .sheet{width:100%;max-width:460px;background:#fff;border-radius:23px;padding:22px;max-height:85vh;overflow:auto}
+    .event-actions{margin-top:4px}.event-actions button{font-size:12px;color:#087657;background:none;border:0;padding:4px 0;text-decoration:underline}
+    .smallsub{font-size:12px;color:#5c7767;line-height:1.5}
+    .profile-state{border:1px solid #d5ecdf;background:#f0f8f3;padding:13px;border-radius:14px;margin-top:12px}
+    .logo-dot{border-radius:14px;background:#e5f4ea;padding:11px;font-size:23px}
+    @media(min-width:540px){.nav button{font-size:12px}.nav button span{font-size:22px}}
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <main class="app">
+    <header><div><h1>♻️ PfandTascherl</h1><div class="sub">Dein Pfand. Deine Wirkung.</div></div><span class="tag">Version 4.0 · Demo</span></header>
+
+    <section id="home">
+      <div class="hero">
+        <small>Dein verfügbares Pfandguthaben</small>
+        <div class="amount" id="balance">0,00 €</div>
+        <div class="hero-footer">Sammeln · Spenden · Auszahlen</div>
+        <div id="auto-home-indicator" style="font-size:12px;margin-top:13px;color:#def2e8">Automatische Spenden: aus</div>
+      </div>
+      <div class="card">
+        <h2>Pfandbon einlösen</h2>
+        <p class="sub">Scanne einen Demo-QR-Code oder simuliere die Rückgabe von 10 Pfandflaschen.</p>
+        <button class="btn" data-goto="scan">▣ QR-Code scannen</button>
+        <button class="btn secondary" id="add-demo">＋ 2,50 € Demo-Pfand hinzufügen</button>
+      </div>
+      <div class="card">
+        <h2>Was möchtest du tun?</h2>
+        <div class="row" style="gap:9px">
+          <button class="btn secondary" style="margin-top:0" data-goto="donate">♡ Spenden</button>
+          <button class="btn outline" style="margin-top:0" data-goto="account">↗ Auszahlen</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>📍 Pfandautomaten finden</h2>
+        <p class="sub">Sieh dir Rückgabeautomaten in deiner Nähe an – mit Entfernung, Karte und Fußweg.</p>
+        <button class="btn secondary" data-goto="places">⌖ Automaten in meiner Nähe</button>
+      </div>
+      <div class="card">
+        <div class="section-title"><h2>Gemeinsam mehr bewirken</h2><span class="pill">Demo-Community</span></div>
+        <p class="sub">Entdecke gemeinsame Spendenaktionen oder erstelle dein persönliches Spendenziel.</p>
+        <button class="btn secondary" data-goto="impact">💚 Spendenziele &amp; Community ansehen</button>
+      </div>
+      <div class="card">
+        <h2>Deine Wirkung</h2>
+        <div class="row stat"><span>💚 Bisher gespendet</span><strong id="total-donated">0,00 €</strong></div>
+        <div class="row stat"><span>🏦 Auszahlungen (Demo)</span><strong id="total-withdrawn">0,00 €</strong></div>
+        <div class="row stat"><span>♻️ Pfandbons eingelöst</span><strong id="total-codes">0</strong></div>
+        <div class="row stat"><span>🥤 Erfasste Flaschen &amp; Dosen</span><strong id="total-items">0</strong></div>
+        <button class="btn secondary" data-goto="impact">📊 Deine Wirkung ansehen</button>
+      </div>
+    </section>
+
+    <section id="scan" hidden>
+      <div class="card">
+        <h2>QR-Code scannen</h2>
+        <p class="sub">Für die Demo hat ein Code das Format <code>PFANDTASCHERL:BON123:250</code> (250 bedeutet 2,50 €).</p>
+        <video id="video" playsinline muted hidden></video>
+        <button class="btn" id="camera-start">▣ Kamera starten</button>
+        <button class="btn secondary" id="camera-stop" hidden>Kamera stoppen</button>
+        <label class="label" for="qr">QR-Code manuell eingeben</label>
+        <input class="input" id="qr" value="PFANDTASCHERL:BON123:250" autocapitalize="characters" spellcheck="false">
+        <button class="btn" id="redeem-qr">Code einlösen</button>
+        <div class="notice">Dies ist eine Simulation. Ein echter Pfandbon muss durch den Betreiber bestätigt werden, damit er nicht mehrfach eingelöst werden kann.</div>
+      </div>
+    </section>
+
+
+    <section id="places" hidden>
+      <div class="card">
+        <h2>📍 Pfandautomaten in der Nähe</h2>
+        <p class="sub">Finde auf OpenStreetMap erfasste Rückgabeautomaten in Wien und Umgebung – nach Luftlinie von deinem Standort sortiert.</p>
+        <button class="btn" type="button" id="places-geolocate">⌖ Meinen Standort verwenden</button>
+        <label class="label" for="places-preset">Oder einen Teststandort in Wien auswählen</label>
+        <select class="place-filter" id="places-preset">
+          <option value="48.2063,16.3848">Wien Mitte – Landstraße</option>
+          <option value="48.1769,16.3774">Hauptbahnhof – Favoriten</option>
+          <option value="48.2184,16.3924">Praterstern – Leopoldstadt</option>
+          <option value="48.1969,16.3381">Westbahnhof – Rudolfsheim</option>
+          <option value="48.2548,16.4005">Floridsdorf – Bahnhof</option>
+          <option value="48.1853,16.3330">Meidling – Bahnhof</option>
+          <option value="48.2426,16.3207">Döbling – Oberdöbling</option>
+        </select>
+        <button class="btn outline" type="button" id="places-demo">Mit Teststandort suchen</button>
+        <div class="places-status" role="status" aria-live="polite" id="places-status">Wähle „Meinen Standort verwenden“ oder einen Teststandort, um Automaten zu suchen.</div>
+        <div id="location-map" class="places-map" role="img" aria-label="Karte mit Rückgabeautomaten in der Nähe"></div>
+        <div class="map-legend"><span><i class="dot you"></i>Dein Standort</span><span><i class="dot"></i>Erfasster Automat</span><span><i class="dot store"></i>Supermarkt (unbestätigt)</span></div>
+        <div id="places-results" aria-live="polite"></div>
+        <p class="tiny">Die Entfernungen sind Luftlinien. Standorte stammen aus OpenStreetMap und sind möglicherweise unvollständig oder veraltet. Nicht jeder erfasste Automat unterstützt das österreichische Einwegpfand.</p>
+      </div>
+      <div class="card">
+        <h3>Weitere Rückgabestellen finden</h3>
+        <p class="sub">Für eine zusätzliche Standortsuche kannst du die offizielle App von Recycling Pfand Österreich nutzen oder direkt in einer Karten-App suchen.</p>
+        <div class="place-actions">
+          <a href="https://apps.apple.com/at/app/konsument-ewp-%C3%B6sterreich/id6739577687" target="_blank" rel="noopener noreferrer">Offizielle EWP-App ↗</a>
+          <a id="places-apple-search" href="https://maps.apple.com/?q=Pfandautomat%20Wien" target="_blank" rel="noopener noreferrer">Apple Maps ↗</a>
+          <a id="places-google-search" href="https://www.google.com/maps/search/?api=1&amp;query=Pfandautomat%20Wien" target="_blank" rel="noopener noreferrer">Google Maps ↗</a>
+        </div>
+        <div class="notice"><strong>Datenschutz:</strong> Bei einer Standortsuche werden die gewählten Koordinaten für die Abfrage an den OpenStreetMap-Dienst Overpass übermittelt. Die Kartendarstellung lädt OpenStreetMap-Kacheln. Dein Standort wird nicht in deinem Pfandkonto gespeichert. Die Funktion benötigt eine Internetverbindung; für die Standortfreigabe im iPhone-Browser ist in der Regel HTTPS erforderlich.</div>
+      </div>
+    </section>
+
+    <section id="donate" hidden>
+      <div class="card">
+        <h2>Guthaben spenden</h2>
+        <p class="sub">Wähle einen Spendenzweck und lege selbst fest, wie viel deines Guthabens du geben möchtest.</p>
+        <div class="balance-chip">Verfügbares Guthaben: <strong id="donate-balance">0,00 €</strong></div>
+        <h3>1. Spendenzweck auswählen</h3>
+        <label class="label" for="cause-search">Spendenzwecke durchsuchen</label>
+        <input class="input" id="cause-search" type="search" placeholder="Suche z. B. Umwelt, Tiere …" autocomplete="off">
+        <div class="chips"><button type="button" class="chip" id="favorites-only" aria-pressed="false">☆ Nur Favoriten</button></div>
+        <div id="cause-options"></div>
+        <p class="tiny">Spendenbereiche auswählen oder eine Beispielorganisation festlegen. Alle Einträge dienen nur der Demo.</p>
+        <details style="margin-top:16px;border:1px solid #dbeadf;border-radius:14px;padding:13px">
+          <summary style="font-weight:750;color:#0a694d;cursor:pointer">🏢 Organisationen suchen &amp; favorisieren</summary>
+          <p class="smallsub">Alle aufgeführten Organisationen sind ausdrücklich fiktive Platzhalter, keine realen Spendenempfänger.</p>
+          <label class="label" for="org-search">Organisation suchen</label>
+          <input class="input" id="org-search" type="search" placeholder="Name oder Bereich …">
+          <div class="chips"><button type="button" class="chip" id="org-favorites-only" aria-pressed="false">☆ Favorisierte Organisationen</button></div>
+          <div id="org-options"></div>
+        </details>
+        <div id="org-selected" class="balance-chip" hidden></div>
+        <div id="selected-campaign" class="balance-chip" hidden></div>
+        <form id="donation-form" novalidate>
+          <label class="label" for="donate-amount">2. Spendenbetrag in Euro</label>
+          <input class="input" id="donate-amount" inputmode="decimal" placeholder="z. B. 1,50" autocomplete="off" required>
+          <div class="quick" aria-label="Spendenbetrag schnell auswählen">
+            <button type="button" data-donation-preset="0.50">0,50 €</button>
+            <button type="button" data-donation-preset="1.00">1,00 €</button>
+            <button type="button" data-donation-preset="2.50">2,50 €</button>
+            <button type="button" data-donation-preset="all">Alles</button>
+          </div>
+          <button type="submit" class="btn" id="donation-submit">💚 Jetzt Demo-Spende buchen</button>
+        </form>
+        <div id="donation-success" class="success" role="status" hidden></div>
+        <p class="tiny">Bei einer Spende wird der gewählte Betrag sofort vom Demo-Guthaben abgezogen. Du kannst eine Musterbestätigung als PDF speichern. Es fließt kein echtes Geld.</p>
+      </div>
+    </section>
+
+    <section id="impact" hidden>
+      <div class="card">
+        <div class="section-title"><h2>📊 Deine Wirkung</h2><span class="pill">Deine Statistik</span></div>
+        <p class="sub">Deine persönlichen Ergebnisse – direkt aus deinen Demo-Buchungen.</p>
+        <div class="stat-grid">
+          <div class="stat-tile"><span>Insgesamt gespendet</span><strong id="impact-total">0,00 €</strong></div>
+          <div class="stat-tile"><span>Pfand gesammelt</span><strong id="impact-earned">0,00 €</strong></div>
+          <div class="stat-tile"><span>Flaschen &amp; Dosen</span><strong id="impact-items">0</strong></div>
+          <div class="stat-tile"><span>Eingelöste Bons</span><strong id="impact-codes">0</strong></div>
+        </div>
+        <h3 style="margin-top:21px">Spenden nach Bereichen</h3>
+        <div id="donation-breakdown"></div>
+        <h3 style="margin-top:21px">Monatliche Spenden</h3>
+        <div id="month-chart" aria-label="Monatliche Spenden als Balkendiagramm"></div>
+      </div>
+      <div class="card">
+        <div class="section-title"><h2>🎯 Deine Spendenziele</h2><span class="pill">Persönlich</span></div>
+        <p class="sub">Setze eigene Ziele. Neue Spenden für den gewählten Bereich erhöhen automatisch den Fortschritt.</p>
+        <div id="goals-list"><p class="sub">Noch keine Ziele erstellt.</p></div>
+        <form id="goal-form" novalidate>
+          <label class="label" for="goal-name">Neues Ziel</label>
+          <input class="input" id="goal-name" maxlength="60" placeholder="z. B. 20 € für Tierheime" required>
+          <label class="label" for="goal-cause">Spendenbereich</label>
+          <select id="goal-cause" class="place-filter"></select>
+          <label class="label" for="goal-amount">Zielbetrag in Euro</label>
+          <input class="input" id="goal-amount" inputmode="decimal" placeholder="z. B. 20,00" required>
+          <button type="submit" class="btn">＋ Spendenziel erstellen</button>
+        </form>
+      </div>
+      <div class="card">
+        <div class="section-title"><h2>🤝 Community-Aktionen</h2><span class="pill">Beispieldaten</span></div>
+        <p class="sub">Gemeinsame Spendenaktionen mit fiktiven Startbeträgen. Deine Demo-Spenden werden lokal hinzugerechnet – keine Live-Zahlen anderer Nutzer.</p>
+        <div id="campaigns-list"></div>
+      </div>
+      <div class="card">
+        <div class="section-title"><h2>🔔 Mitteilungen</h2><span class="pill">In-App</span></div>
+        <p class="sub">Hinweise zu Gutschriften, Spenden, Auszahlungen und erreichten Zielen.</p>
+        <div id="notifications-list"></div>
+        <button type="button" id="notifications-clear" class="btn outline">Mitteilungen löschen</button>
+        <p class="tiny">Keine Push-Mitteilungen außerhalb der App.</p>
+      </div>
+    </section>
+
+    <section id="account" hidden>
+      <div class="card">
+        <div class="section-title"><h2>👤 Mein Profil</h2><span class="pill">Lokal</span></div>
+        <p class="sub">Lege ein Demo-Profil an. Es ist kein echtes Benutzerkonto und funktioniert nur in diesem Browser.</p>
+        <div id="profile-state" class="profile-state">Noch kein Profil eingerichtet.</div>
+        <form id="profile-form" novalidate>
+          <label class="label" for="profile-name">Anzeigename</label>
+          <input class="input" id="profile-name" maxlength="50" autocomplete="nickname" placeholder="z. B. Alex">
+          <label class="label" for="profile-email">E-Mail (optional)</label>
+          <input class="input" type="email" id="profile-email" autocomplete="off" placeholder="name@beispiel.at">
+          <button type="submit" class="btn" id="profile-save">Demo-Profil speichern</button>
+        </form>
+        <button type="button" id="profile-logout" class="btn outline" hidden>Vom Demo-Profil abmelden</button>
+        <button type="button" id="profile-login" class="btn secondary" hidden>Mit lokalem Demo-Profil anmelden</button>
+        <div class="notice">Kein echtes Login: keine Passwörter, kein Server und keine Synchronisierung. Verwende keine sensiblen Daten.</div>
+      </div>
+      <div class="card">
+        <div class="section-title"><h2>⚙️ Automatisch spenden</h2><span class="pill">Einstellung</span></div>
+        <p class="sub">Bei jeder neuen Pfand-Gutschrift wird ein Teil automatisch einem Spendenbereich zugeordnet. Der Rest bleibt auf deinem Guthaben.</p>
+        <div class="row"><label class="label" for="auto-percent" style="margin:0">Anteil vom Pfandbon</label><strong id="auto-percent-value">0 %</strong></div>
+        <input id="auto-percent" class="range" type="range" min="0" max="100" step="5" value="0">
+        <div class="row sub"><span>0 %</span><span>50 %</span><span>100 %</span></div>
+        <label class="label" for="auto-cause">An welchen Bereich spenden?</label>
+        <select id="auto-cause" class="place-filter"></select>
+        <div class="balance-chip" id="auto-preview">Bei einem 2,50-€-Bon: 0,00 € Spende und 2,50 € Guthaben</div>
+        <button id="auto-save" type="button" class="btn">Einstellung speichern</button>
+      </div>
+      <div class="card">
+        <h2>🔔 Einstellungen</h2>
+        <label class="toggle"><input id="notifications-enabled" type="checkbox" checked> In-App-Mitteilungen anzeigen</label>
+        <p class="tiny">Mitteilungen erscheinen nur innerhalb der Demo-App. Keine Push-Berechtigung notwendig.</p>
+      </div>
+      <div class="card">
+        <h2>Auf Bankkonto auszahlen</h2>
+        <p class="sub">Du kannst auch entscheiden, dein Pfandguthaben statt einer Spende auf dein Bankkonto auszuzahlen.</p>
+        <div class="balance-chip">Für Auszahlung verfügbar: <strong id="withdraw-balance">0,00 €</strong></div>
+        <form id="withdraw-form" novalidate>
+          <label class="label" for="withdraw-iban">IBAN des Empfängerkontos</label>
+          <input class="input" id="withdraw-iban" inputmode="text" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="AT00 0000 0000 0000 0000" maxlength="45" required>
+          <button type="button" class="btn outline compact" id="fill-demo-iban" style="margin-top:7px">Demo-IBAN einsetzen</button>
+          <label class="label" for="withdraw-amount">Auszahlungsbetrag in Euro</label>
+          <input class="input" id="withdraw-amount" inputmode="decimal" placeholder="z. B. 2,50" autocomplete="off" required>
+          <button type="button" class="btn secondary compact" id="all-withdraw" style="margin-top:8px">Gesamtes Guthaben verwenden</button>
+          <button class="btn" type="submit" id="withdraw-submit">↗ Demo-Auszahlung durchführen</button>
+        </form>
+        <div class="notice"><strong>Nur Testbetrieb:</strong> Hier wird keine echte Banküberweisung ausgelöst. Bitte verwende keine echten Bankdaten. Der ausgezahlte Betrag wird lediglich vom simulierten App-Guthaben abgezogen.</div>
+        <div id="withdraw-success" class="success" role="status" hidden></div>
+      </div>
+      <div class="card">
+        <div class="row"><h2>Verlauf</h2><span class="sub" id="event-count">0 Aktivitäten</span></div>
+        <div id="events" aria-live="polite"><p class="sub">Noch keine Aktivitäten.</p></div>
+        <button class="btn danger" id="reset" type="button">Demo-Daten zurücksetzen</button>
+      </div>
+    </section>
+  </main>
+  <nav class="nav" aria-label="Hauptnavigation"><div class="nav-inner">
+    <button data-tab="home" class="active" aria-current="page"><span>⌂</span>Start</button>
+    <button data-tab="scan"><span>▣</span>Scannen</button>
+    <button data-tab="places"><span>⌖</span>Standorte</button>
+    <button data-tab="donate"><span>♡</span>Spenden</button>
+    <button data-tab="impact"><span>▥</span>Wirkung</button>
+    <button data-tab="account"><span>▤</span>Konto</button>
+  </div></nav>
+  <script>
+    'use strict';
+    // Legacy-Speicherschlüssel aus PfandWien bleibt absichtlich unverändert: vorhandene Browserdaten bleiben nach einem Update auf derselben Domain erhalten.
+    const STORAGE_KEY = 'pfandwien_demo_reset_20261115';
+    const blank = () => ({balance:0,total:0,withdrawn:0,codes:[],events:[],items:0,unknownItems:0,profile:null,loggedIn:false,autoPercent:0,autoCause:0,goals:[],favorites:[],notifications:[],notificationsEnabled:true,orgFavorites:[]});
+    function load(){
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if(!parsed || typeof parsed !== 'object') return blank();
+        return {
+          balance:Number.isSafeInteger(parsed.balance)&&parsed.balance>=0?parsed.balance:0,
+          total:Number.isSafeInteger(parsed.total)&&parsed.total>=0?parsed.total:0,
+          withdrawn:Number.isSafeInteger(parsed.withdrawn)&&parsed.withdrawn>=0?parsed.withdrawn:0,
+          codes:Array.isArray(parsed.codes)?parsed.codes.filter(x=>typeof x==='string'):[],
+          events:Array.isArray(parsed.events)?parsed.events.slice(0,150):[],
+          items:Number.isSafeInteger(parsed.items)&&parsed.items>=0?parsed.items:0,
+          unknownItems:Number.isSafeInteger(parsed.unknownItems)&&parsed.unknownItems>=0?parsed.unknownItems:0,
+          profile:parsed.profile&&typeof parsed.profile.name==='string'?{name:parsed.profile.name.slice(0,50),email:String(parsed.profile.email||'').slice(0,120)}:null,
+          loggedIn:!!parsed.loggedIn,
+          autoPercent:Number.isInteger(parsed.autoPercent)&&parsed.autoPercent>=0&&parsed.autoPercent<=100?parsed.autoPercent:0,
+          autoCause:Number.isInteger(parsed.autoCause)&&parsed.autoCause>=0&&parsed.autoCause<4?parsed.autoCause:0,
+          goals:Array.isArray(parsed.goals)?parsed.goals.slice(0,30).filter(g=>g&&typeof g.name==='string'&&Number.isInteger(g.target)&&g.target>0):[],
+          favorites:Array.isArray(parsed.favorites)?parsed.favorites.filter(i=>Number.isInteger(i)&&i>=0&&i<4):[],
+          notifications:Array.isArray(parsed.notifications)?parsed.notifications.slice(0,40):[],
+          notificationsEnabled:parsed.notificationsEnabled!==false,
+          orgFavorites:Array.isArray(parsed.orgFavorites)?parsed.orgFavorites.filter(x=>typeof x==='string'):[]
+        };
+      } catch {return blank()}
+    }
+    let state = load();
+    const causes = [
+      {emoji:'🏠',name:'Wohnungslosenhilfe',text:'Menschen in Wien unterstützen'},
+      {emoji:'🍲',name:'Lebensmittelhilfe',text:'Mahlzeiten und Versorgung'},
+      {emoji:'🌳',name:'Umwelt & Klima',text:'Lokale Umweltprojekte'},
+      {emoji:'🐾',name:'Tierschutz',text:'Tiere in Not unterstützen'}
+    ];
+    let selectedCause=0;
+    let favoriteFilter=false, selectedCampaignId=null,selectedOrganizationId=null,orgFavoritesOnly=false;
+    const demoOrganizations=[
+      {id:'not',emoji:'🏠',name:'Nothilfe Wien (Demo)',cause:0,desc:'Wohnungslosenhilfe · fiktive Organisation'},
+      {id:'nach',emoji:'🏠',name:'Nachbarschaftshilfe (Demo)',cause:0,desc:'Soziale Unterstützung · fiktive Organisation'},
+      {id:'mahl',emoji:'🍲',name:'Gemeinsam Essen (Demo)',cause:1,desc:'Lebensmittelhilfe · fiktive Organisation'},
+      {id:'gruen',emoji:'🌳',name:'Stadtgrün Initiative (Demo)',cause:2,desc:'Klima- und Naturschutz · fiktive Organisation'},
+      {id:'tier',emoji:'🐾',name:'Tierfreunde Wien (Demo)',cause:3,desc:'Tierschutz · fiktive Organisation'},
+      {id:'pfote',emoji:'🐾',name:'Pfotenhilfe Stadt (Demo)',cause:3,desc:'Tierrettung · fiktive Organisation'}
+    ];
+    const campaigns=[
+      {id:'warm',name:'Wärme für Wien',emoji:'🏠',text:'Unterstützung für Menschen ohne festen Wohnsitz',cause:0,baseline:124000,target:200000},
+      {id:'food',name:'Gemeinsam satt',emoji:'🍲',text:'Lebensmittelhilfe und warme Mahlzeiten',cause:1,baseline:98500,target:150000},
+      {id:'trees',name:'Grüneres Wien',emoji:'🌳',text:'Lokale Klima- und Umweltprojekte',cause:2,baseline:72000,target:125000}
+    ];
+    let stream=null,scanning=false,notifyTimer=null;
+    const $=id=>document.getElementById(id);
+    const euro=cents=>(cents/100).toLocaleString('de-AT',{style:'currency',currency:'EUR'});
+    const datetime=()=>new Date().toLocaleString('de-AT',{dateStyle:'short',timeStyle:'short'});
+    function message(msg){const el=$('toast');el.textContent=msg;el.style.display='block';clearTimeout(notifyTimer);notifyTimer=setTimeout(()=>el.style.display='none',3300)}
+    function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch{message('Hinweis: Diese Ansicht speichert Daten möglicherweise nicht dauerhaft.')}render()}
+    function uid(){return 't'+Date.now().toString(36)+Math.random().toString(36).slice(2,9)}
+    function addEvent(type,title,amount,detail,extra={}){state.events.unshift({id:uid(),type,title,amount,detail,time:datetime(),iso:new Date().toISOString(),...extra});state.events=state.events.slice(0,150)}
+    function alertInApp(title,detail){
+      if(!state.notificationsEnabled)return;
+      state.notifications.unshift({id:uid(),title,detail,time:datetime()});state.notifications=state.notifications.slice(0,40);
+    }
+    function creditGoals(causeIndex,cents){
+      const matching=state.goals.filter(g=>g.cause===causeIndex && g.raised<g.target);
+      // Eine Spende zählt nur für das älteste noch offene Ziel, damit sie nicht doppelt gezählt wird.
+      let remaining=cents;
+      for(const goal of matching){if(remaining<=0)break;
+        const before=goal.raised,applied=Math.min(goal.target-goal.raised,remaining);
+        goal.raised+=applied;remaining-=applied;
+        if(before<goal.target && goal.raised>=goal.target)alertInApp('🎉 Spendenziel erreicht',goal.name);
+      }
+    }
+    function recordDonation(cents,causeIndex,mode='manual',campaignId=null,organizationId=null){
+      if(!Number.isSafeInteger(cents)||cents<=0||cents>state.balance)return false;
+      state.balance-=cents;state.total+=cents;
+      const cause=causes[causeIndex];
+      const label=mode==='auto'?'Automatische Demo-Spende': 'Demo-Spende';
+      const campaign=campaigns.find(c=>c.id===campaignId);
+      const org=demoOrganizations.find(o=>o.id===organizationId);
+      addEvent('donation',`${label}: ${org?.name||cause.name}`,-cents,campaign?`Aktion: ${campaign.name}`:'Vom Guthaben abgezogen',{causeIndex,campaignId:campaign?campaign.id:null,organizationId:org?.id||null,auto:mode==='auto'});
+      creditGoals(causeIndex,cents);
+      alertInApp('💚 '+(mode==='auto'?'Automatische Spende':'Spende gebucht'),`${euro(cents)} für ${cause.name} (Demo)`);
+      return true;
+    }
+    function parseEuros(str){
+      if(typeof str!=='string')return null;
+      const s=str.trim().replace(/\s|€/g,'').replace(',','.');
+      if(!/^\d+(?:\.\d{1,2})?$/.test(s))return null;
+      const cents=Math.round(Number(s)*100);
+      return Number.isSafeInteger(cents)&&cents>0?cents:null;
+    }
+    function writeEuro(id,n){$(id).textContent=euro(n)}
+    function selectCause(index){selectedCause=index;renderCauses()}
+    function renderCauses(){
+      const target=$('cause-options');target.replaceChildren();
+      const query=$('cause-search').value.trim().toLocaleLowerCase('de');let shown=0;
+      causes.forEach((c,i)=>{
+        if(query&&!(`${c.name} ${c.text}`.toLocaleLowerCase('de').includes(query)))return;
+        if(favoriteFilter&&!state.favorites.includes(i))return;
+        shown++;
+        const line=document.createElement('div');line.className='row';line.style.gap='7px';
+        const btn=document.createElement('button');btn.type='button';btn.className='cause'+(i===selectedCause?' selected':'');btn.style.flex='1';btn.style.minWidth='0';btn.setAttribute('aria-pressed',String(i===selectedCause));
+        const emoji=document.createElement('span');emoji.className='cause-icon';emoji.textContent=c.emoji;
+        const info=document.createElement('span');info.className='cause-info';
+        const title=document.createElement('strong');title.textContent=c.name;
+        const sub=document.createElement('small');sub.textContent=c.text;info.append(title,sub);
+        const check=document.createElement('span');check.className='check';check.textContent=i===selectedCause?'✓':'○';
+        btn.append(emoji,info,check);
+        btn.addEventListener('click',()=>{selectedCause=i;selectedCampaignId=null;selectedOrganizationId=null;renderCauses();renderCampaignSelection();renderOrganizationSelection()});
+        const fav=document.createElement('button');fav.type='button';fav.className='chip';fav.style.flex='0 0 43px';fav.style.height='45px';fav.style.padding='0';fav.style.fontSize='20px';fav.style.marginTop='3px';
+        fav.textContent=state.favorites.includes(i)?'★':'☆';fav.title='Favorit umschalten';fav.setAttribute('aria-label',c.name+' Favorit umschalten');
+        fav.addEventListener('click',()=>{if(state.favorites.includes(i))state.favorites=state.favorites.filter(x=>x!==i);else state.favorites.push(i);persist()});
+        line.append(btn,fav);target.append(line);
+      });
+      if(!shown){const p=document.createElement('p');p.className='sub';p.textContent='Keine Spendenzwecke gefunden. Suche oder Favoritenfilter ändern.';target.append(p)}
+      $('favorites-only').classList.toggle('active',favoriteFilter);
+      $('favorites-only').setAttribute('aria-pressed',String(favoriteFilter));
+    }
+    function renderCampaignSelection(){
+      const el=$('selected-campaign'),campaign=campaigns.find(c=>c.id===selectedCampaignId);
+      el.hidden=!campaign;
+      if(campaign){el.replaceChildren();const label=document.createElement('strong');label.textContent='Community-Aktion: '+campaign.name;el.append(label);
+        const cancel=document.createElement('button');cancel.type='button';cancel.className='btn linklike';cancel.textContent='Auswahl aufheben';cancel.addEventListener('click',()=>{selectedCampaignId=null;renderCampaignSelection()});el.append(cancel)}
+    }
+    function renderOrganizations(){
+      const root=$('org-options');root.replaceChildren();const query=$('org-search').value.trim().toLocaleLowerCase('de');let count=0;
+      demoOrganizations.forEach(o=>{
+        if(query&&!(`${o.name} ${o.desc}`.toLocaleLowerCase('de').includes(query)))return;
+        if(orgFavoritesOnly&&!state.orgFavorites.includes(o.id))return;
+        count++;
+        const line=document.createElement('div');line.className='row';line.style.gap='7px';
+        const btn=document.createElement('button');btn.type='button';btn.className='cause'+(selectedOrganizationId===o.id?' selected':'');btn.style.cssText='flex:1;min-width:0';btn.setAttribute('aria-pressed',String(selectedOrganizationId===o.id));
+        const emoji=document.createElement('span');emoji.className='cause-icon';emoji.textContent=o.emoji;
+        const inf=document.createElement('span');inf.className='cause-info';
+        const name=document.createElement('strong');name.textContent=o.name;
+        const desc=document.createElement('small');desc.textContent=o.desc;
+        inf.append(name,desc);
+        const check=document.createElement('span');check.className='check';check.textContent=selectedOrganizationId===o.id?'✓':'○';
+        btn.append(emoji,inf,check);
+        btn.addEventListener('click',()=>{selectedOrganizationId=o.id;selectedCause=o.cause;selectedCampaignId=null;renderOrganizations();renderCauses();renderCampaignSelection();renderOrganizationSelection()});
+        const fav=document.createElement('button');fav.className='chip';fav.type='button';fav.style.cssText='flex:0 0 43px;height:45px;padding:0;font-size:20px';fav.textContent=state.orgFavorites.includes(o.id)?'★':'☆';fav.title='Organisation favorisieren';
+        fav.setAttribute('aria-label',o.name+' Favorit umschalten');
+        fav.addEventListener('click',()=>{if(state.orgFavorites.includes(o.id))state.orgFavorites=state.orgFavorites.filter(x=>x!==o.id);else state.orgFavorites.push(o.id);persist()});
+        line.append(btn,fav);root.append(line);
+      });
+      if(!count){const p=document.createElement('p');p.className='sub';p.textContent='Keine passenden Organisationen. Filter oder Suche ändern.';root.append(p)}
+      $('org-favorites-only').classList.toggle('active',orgFavoritesOnly);
+      $('org-favorites-only').setAttribute('aria-pressed',String(orgFavoritesOnly));
+    }
+    function renderOrganizationSelection(){
+      const selected=demoOrganizations.find(o=>o.id===selectedOrganizationId);
+      const target=$('org-selected');target.hidden=!selected;target.replaceChildren();
+      if(selected){const text=document.createElement('strong');text.textContent='Ausgewählt: '+selected.name+' · fiktiv';target.append(text);
+        const clear=document.createElement('button');clear.type='button';clear.className='btn linklike';clear.textContent='Organisation abwählen';clear.addEventListener('click',()=>{selectedOrganizationId=null;renderOrganizationSelection();renderOrganizations()});target.append(clear)}
+    }
+    function renderEvents(){
+      const target=$('events');target.replaceChildren();
+      $('event-count').textContent=`${state.events.length} ${state.events.length===1?'Aktivität':'Aktivitäten'}`;
+      if(!state.events.length){const p=document.createElement('p');p.className='sub';p.textContent='Noch keine Aktivitäten.';target.append(p);return}
+      for(const entry of state.events){
+        const item=document.createElement('div');item.className='event';
+        if(typeof entry==='string'){
+          const body=document.createElement('div');body.className='event-body';
+          const title=document.createElement('strong');title.textContent=entry;
+          body.append(title);item.append(body);
+        } else if(entry && typeof entry==='object'){
+          const emoji=document.createElement('span');emoji.className='event-icon';emoji.textContent=entry.type==='redeem'?'♻️':entry.type==='donation'?'💚':'🏦';
+          const body=document.createElement('div');body.className='event-body';
+          const title=document.createElement('strong');title.textContent=String(entry.title||'Aktivität');
+          const details=document.createElement('small');details.textContent=[entry.detail,entry.time].filter(Boolean).join(' · ');
+          const amount=document.createElement('span');amount.className='event-amount '+(entry.amount>=0?'plus':'minus');amount.textContent=(entry.amount>=0?'+':'−')+euro(Math.abs(entry.amount||0));
+          body.append(title,details);
+          if(entry.type==='donation'&&entry.id){
+            const actions=document.createElement('div');actions.className='event-actions';
+            const receipt=document.createElement('button');receipt.type='button';receipt.textContent='Musterbeleg als PDF';
+            receipt.addEventListener('click',()=>downloadReceipt(entry));actions.append(receipt);body.append(actions);
+          }
+          item.append(emoji,body,amount);
+        }
+        target.append(item);
+      }
+    }
+    function render(){
+      writeEuro('balance',state.balance);writeEuro('donate-balance',state.balance);writeEuro('withdraw-balance',state.balance);
+      writeEuro('total-donated',state.total);writeEuro('total-withdrawn',state.withdrawn);
+      $('total-codes').textContent=state.codes.length;
+      $('total-items').textContent=String(state.items)+(state.unknownItems?' (+ unbekannte Bons)':'');
+      $('auto-home-indicator').textContent=state.autoPercent>0?`Automatische Spende: ${state.autoPercent} % an ${causes[state.autoCause].name}`:'Automatische Spenden: aus';
+      $('donation-submit').disabled=state.balance<=0;
+      $('withdraw-submit').disabled=state.balance<=0;
+      renderCauses();renderOrganizations();renderOrganizationSelection();renderEvents();renderImpact();renderGoals();renderCampaigns();renderNotifications();renderProfile();
+    }
+    function tab(id){
+      document.querySelectorAll('main section').forEach(s=>s.hidden=s.id!==id);
+      document.querySelectorAll('.nav button').forEach(b=>{const active=b.dataset.tab===id;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+      if(id!=='scan')stopCamera();
+      if(id==='places')updateMap();
+      window.scrollTo({top:0,behavior:'instant'});
+    }
+    function redeem(code,cents){
+      if(!/^[A-Za-z0-9_-]{3,60}$/.test(code)||!Number.isSafeInteger(cents)||cents<=0||cents>100000){message('Ungültiger Pfandcode oder Betrag.');return}
+      if(state.codes.includes(code)){message('Dieser QR-Code wurde bereits verwendet.');return}
+      state.codes.push(code);
+      state.balance+=cents;
+      const items=cents%25===0?cents/25:0;
+      if(items)state.items+=items;else state.unknownItems++;
+      addEvent('redeem','Pfand eingelöst',cents,`Bon ${code}${items?' · '+items+' Flaschen/Dosen':''}`);
+      alertInApp('♻️ Pfand gutgeschrieben',`${euro(cents)} Guthaben erhalten`);
+      const auto=Math.min(cents,Math.round(cents*state.autoPercent/100));
+      if(auto>0)recordDonation(auto,state.autoCause,'auto');
+      persist();
+      message(auto>0?`${euro(cents-auto)} Guthaben + ${euro(auto)} automatisch gespendet`:`${euro(cents)} zum Guthaben hinzugefügt`);
+      tab('home');
+    }
+    function parseCode(raw){const match=/^(?:PFANDTASCHERL|PFANDWIEN):([A-Za-z0-9_-]{3,60}):(\d{1,6})$/.exec(String(raw).trim());if(!match){message('QR-Code hat kein gültiges Demo-Format.');return}redeem(match[1],Number(match[2]))}
+    function doDonation(event){
+      event.preventDefault();$('donation-success').hidden=true;
+      const cents=parseEuros($('donate-amount').value);
+      if(cents===null){message('Bitte einen gültigen Spendenbetrag eingeben.');return}
+      if(cents>state.balance){message(`Nicht genug Guthaben: maximal ${euro(state.balance)}.`);return}
+      const cause=causes[selectedCause];
+      if(!recordDonation(cents,selectedCause,'manual',selectedCampaignId,selectedOrganizationId))return;
+      selectedCampaignId=null;selectedOrganizationId=null;renderCampaignSelection();renderOrganizationSelection();persist();
+      $('donate-amount').value='';
+      $('donation-success').textContent=`${euro(cents)} wurden für ${cause.name} vorgemerkt. Dein neues Guthaben: ${euro(state.balance)}. Den Musterbeleg findest du unter Konto → Verlauf.`;
+      $('donation-success').hidden=false;
+      message(`${euro(cents)} vom Guthaben abgezogen`);
+    }
+    function validIBAN(value){
+      const s=value.replace(/\s/g,'').toUpperCase();
+      if(!/^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/.test(s))return false;
+      const lengths={AT:20,DE:22,CH:21,IT:27,FR:27,ES:24,NL:18,BE:16,LU:20,GB:22,IE:22,PL:28,CZ:24,SK:24,SI:19,HU:28,HR:21,RO:24};
+      if(lengths[s.slice(0,2)] && s.length!==lengths[s.slice(0,2)])return false;
+      const rearranged=s.slice(4)+s.slice(0,4);let remainder=0;
+      for(const char of rearranged){const expanded=char>='A'&&char<='Z'?String(char.charCodeAt(0)-55):char;for(const digit of expanded)remainder=(remainder*10+Number(digit))%97}
+      return remainder===1;
+    }
+    function doWithdrawal(event){
+      event.preventDefault();$('withdraw-success').hidden=true;
+      const iban=$('withdraw-iban').value.replace(/\s/g,'').toUpperCase();
+      const cents=parseEuros($('withdraw-amount').value);
+      if(!validIBAN(iban)){message('Bitte eine gültige Demo-IBAN eingeben.');return}
+      if(cents===null){message('Bitte einen gültigen Auszahlungsbetrag eingeben.');return}
+      if(cents>state.balance){message(`Nicht genug Guthaben: maximal ${euro(state.balance)}.`);return}
+      // Ausdrücklich keine Bank- oder Netzwerkkommunikation: lokal simulierte Buchung.
+      state.balance-=cents;state.withdrawn+=cents;
+      addEvent('withdrawal','Auszahlung simuliert',-cents,`Demo-Konto ···· ${iban.slice(-4)}`);
+      alertInApp('🏦 Auszahlung simuliert',`${euro(cents)} vom Demo-Guthaben abgezogen`);
+      persist();$('withdraw-iban').value='';$('withdraw-amount').value='';
+      $('withdraw-success').textContent=`Auszahlung von ${euro(cents)} auf Demo-Konto ···· ${iban.slice(-4)} simuliert. Verfügbares Guthaben: ${euro(state.balance)}. Es wurde kein echtes Geld überwiesen.`;
+      $('withdraw-success').hidden=false;
+      message(`${euro(cents)} Demo-Auszahlung gebucht`);
+    }
+    function resetDemo(){
+      if(!confirm('Alle Pfandbons, Spenden und Auszahlungen dieser Demo löschen?'))return;
+      state=blank();selectedCause=0;selectedCampaignId=null;selectedOrganizationId=null;favoriteFilter=false;orgFavoritesOnly=false;
+      $('auto-percent').value='0';$('auto-cause').value='0';$('profile-name').value='';$('profile-email').value='';$('notifications-enabled').checked=true;updateAutoPreview();
+      $('donate-amount').value='';$('withdraw-amount').value='';$('withdraw-iban').value='';
+      $('donation-success').hidden=true;$('withdraw-success').hidden=true;
+      persist();message('Demo-Daten zurückgesetzt');tab('home');
+    }
+    async function startCamera(){
+      if(!navigator.mediaDevices?.getUserMedia){message('Kamera benötigt HTTPS oder unterstützten iPhone-Browser.');return}
+      if(!('BarcodeDetector' in window)){message('QR-Erkennung hier nicht unterstützt. Bitte den Demo-Code eingeben.');return}
+      try{
+        stopCamera();stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});
+        const v=$('video');v.srcObject=stream;v.hidden=false;await v.play();scanning=true;$('camera-stop').hidden=false;
+        const detector=new BarcodeDetector({formats:['qr_code']});
+        async function loop(){
+          if(!scanning)return;
+          try{const codes=await detector.detect(v);if(codes.length){stopCamera();parseCode(codes[0].rawValue);return}}catch{}
+          requestAnimationFrame(loop);
+        }
+        loop();
+      }catch{stopCamera();message('Kamerazugriff nicht möglich. Manuelle Eingabe verwenden.')}
+    }
+    function stopCamera(){scanning=false;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}const v=$('video');v.pause();v.srcObject=null;v.hidden=true;$('camera-stop').hidden=true}
+
+    // Neue Demo-Funktionen: persönliche Ziele, Community, Statistiken und Muster-PDF.
+    function dateInMonth(iso,time){
+      if(iso){const d=new Date(iso);return Number.isNaN(d.valueOf())?null:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`}
+      if(!time)return null;
+      const m=/^(\d{1,2})\.(\d{1,2})\.(\d{4})/.exec(time);
+      return m?`${m[3]}-${m[2].padStart(2,'0')}`:null;
+    }
+    function renderImpact(){
+      $('impact-total').textContent=euro(state.total);
+      $('impact-earned').textContent=euro(state.balance+state.total+state.withdrawn);
+      $('impact-items').textContent=String(state.items);
+      $('impact-codes').textContent=String(state.codes.length);
+      const byCause=causes.map((_,i)=>state.events.filter(e=>e.type==='donation'&&e.causeIndex===i).reduce((s,e)=>s+Math.abs(e.amount||0),0));
+      const root=$('donation-breakdown');root.replaceChildren();
+      causes.forEach((c,i)=>{
+        const sum=byCause[i];const top=document.createElement('div');top.className='row';top.style.marginTop='12px';
+        const name=document.createElement('span');name.textContent=c.emoji+' '+c.name;
+        const value=document.createElement('strong');value.textContent=euro(sum);top.append(name,value);
+        const bar=document.createElement('div');bar.className='progress';bar.style.margin='6px 0 0';const fill=document.createElement('div');fill.style.width=`${state.total?Math.min(100,sum/state.total*100):0}%`;bar.append(fill);root.append(top,bar);
+      });
+      const chart=$('month-chart');chart.replaceChildren();
+      const now=new Date();const months=[];
+      for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({key:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,label:d.toLocaleDateString('de-AT',{month:'short',year:'2-digit'}),sum:0})}
+      state.events.filter(e=>e.type==='donation').forEach(e=>{const row=months.find(x=>x.key===dateInMonth(e.iso,e.time));if(row)row.sum+=Math.abs(e.amount||0)});
+      const max=Math.max(1,...months.map(x=>x.sum));
+      const chartWrap=document.createElement('div');chartWrap.style.cssText='display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;height:146px;align-items:end;margin-top:14px';
+      months.forEach(m=>{
+        const col=document.createElement('div');col.style.cssText='height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px';
+        const label=document.createElement('div');label.className='tiny';label.textContent=euro(m.sum);label.style.fontSize='10px';label.style.whiteSpace='nowrap';
+        const bar=document.createElement('div');bar.style.cssText=`width:75%;min-height:5px;max-width:40px;background:linear-gradient(#10a875,#087657);border-radius:7px 7px 3px 3px;height:${Math.max(5,m.sum/max*91)}px`;
+        const month=document.createElement('div');month.className='tiny';month.textContent=m.label;month.style.whiteSpace='nowrap';month.style.fontSize='10px';
+        col.append(label,bar,month);chartWrap.append(col);
+      });chart.append(chartWrap);
+    }
+    function renderGoals(){
+      const root=$('goals-list');root.replaceChildren();
+      if(!state.goals.length){const p=document.createElement('p');p.className='sub';p.textContent='Noch keine persönlichen Spendenziele. Erstelle unten dein erstes Ziel.';root.append(p);return}
+      state.goals.forEach(g=>{
+        const wrap=document.createElement('div');wrap.className='goal-item';
+        const row=document.createElement('div');row.className='row';
+        const name=document.createElement('strong');name.textContent=g.name;
+        const del=document.createElement('button');del.className='btn linklike';del.type='button';del.textContent='Entfernen';del.setAttribute('aria-label','Ziel '+g.name+' entfernen');
+        del.addEventListener('click',()=>{if(!confirm(`Ziel „${g.name}“ entfernen?`))return;state.goals=state.goals.filter(x=>x.id!==g.id);persist()});
+        row.append(name,del);
+        const sub=document.createElement('div');sub.className='smallsub';sub.textContent=`${causes[g.cause]?.name||'Spenden'} · ${euro(g.raised)} von ${euro(g.target)}${g.raised>=g.target?' · 🎉 Erreicht!':''}`;
+        const prog=document.createElement('div');prog.className='progress';const fill=document.createElement('div');fill.style.width=Math.max(0,Math.min(100,100*g.raised/g.target))+'%';prog.append(fill);
+        wrap.append(row,sub,prog);root.append(wrap);
+      });
+    }
+    function renderCampaigns(){
+      const root=$('campaigns-list');root.replaceChildren();
+      campaigns.forEach(c=>{
+        const contributed=state.events.filter(e=>e.type==='donation'&&e.campaignId===c.id).reduce((s,e)=>s+Math.abs(e.amount||0),0);
+        const total=c.baseline+contributed;
+        const wrap=document.createElement('div');wrap.className='campaign-item';
+        const row=document.createElement('div');row.className='row';const name=document.createElement('strong');name.textContent=c.emoji+' '+c.name;
+        const pct=document.createElement('span');pct.className='pill';pct.textContent=Math.floor(total/c.target*100)+' %';row.append(name,pct);
+        const desc=document.createElement('p');desc.className='smallsub';desc.textContent=c.text+' · fiktiver Anfangsstand';desc.style.margin='6px 0 0';
+        const prog=document.createElement('div');prog.className='progress';const fill=document.createElement('div');fill.style.width=Math.min(100,total/c.target*100)+'%';prog.append(fill);
+        const amounts=document.createElement('div');amounts.className='row smallsub';
+        const a=document.createElement('span');a.textContent=euro(total)+' gesammelt (Demo)';
+        const b=document.createElement('span');b.textContent='Ziel: '+euro(c.target);amounts.append(a,b);
+        const btn=document.createElement('button');btn.className='btn secondary';btn.type='button';btn.textContent='💚 Diese Aktion unterstützen';
+        btn.addEventListener('click',()=>{selectedCampaignId=c.id;selectedOrganizationId=null;selectedCause=c.cause;favoriteFilter=false;$('cause-search').value='';renderCampaignSelection();renderOrganizationSelection();tab('donate');});
+        wrap.append(row,desc,prog,amounts,btn);root.append(wrap);
+      });
+    }
+    function renderNotifications(){
+      const root=$('notifications-list');root.replaceChildren();
+      const list=state.notifications.slice(0,15);
+      if(!list.length){const p=document.createElement('p');p.className='sub';p.textContent='Noch keine Mitteilungen.';root.append(p)}
+      list.forEach(n=>{
+        const box=document.createElement('div');box.className='notice-item';
+        const title=document.createElement('strong');title.textContent=String(n.title||'Mitteilung');
+        const detail=document.createElement('div');detail.className='smallsub';detail.textContent=String(n.detail||'')+' · '+String(n.time||'');
+        box.append(title,detail);root.append(box);
+      });
+    }
+    function renderProfile(){
+      const p=state.profile;
+      const el=$('profile-state');el.replaceChildren();
+      const strong=document.createElement('strong');strong.textContent=p?`${p.name}${state.loggedIn?' · Demo-Profil aktiv':' · abgemeldet'}`:'Noch kein Demo-Profil erstellt';
+      el.append(strong);
+      if(p&&p.email){const mail=document.createElement('div');mail.className='smallsub';mail.textContent=p.email;el.append(mail)}
+      $('profile-logout').hidden=!p||!state.loggedIn;
+      $('profile-login').hidden=!p||state.loggedIn;
+    }
+    function profileSave(e){
+      e.preventDefault();const name=$('profile-name').value.trim();const email=$('profile-email').value.trim();
+      if(name.length<2){message('Bitte einen Anzeigenamen mit mindestens 2 Zeichen eingeben.');return}
+      if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){message('Bitte gültige E-Mail eingeben oder Feld leer lassen.');return}
+      state.profile={name,email};state.loggedIn=true;
+      alertInApp('👤 Demo-Profil gespeichert',`Hallo ${name}! Dein Profil liegt nur auf diesem Gerät.`);
+      persist();message('Demo-Profil gespeichert');
+    }
+    function saveAuto(){
+      state.autoPercent=Number($('auto-percent').value)||0;
+      state.autoCause=Number($('auto-cause').value)||0;
+      persist();message(state.autoPercent?`Automatische Spende mit ${state.autoPercent} % aktiviert`:'Automatische Spenden deaktiviert');
+    }
+    function updateAutoPreview(){
+      const pct=Number($('auto-percent').value)||0;const donation=Math.round(250*pct/100);
+      $('auto-percent-value').textContent=pct+' %';
+      $('auto-preview').textContent=`Bei einem 2,50-€-Bon: ${euro(donation)} Spende und ${euro(250-donation)} Guthaben`;
+    }
+    function makeGoal(e){
+      e.preventDefault();
+      const name=$('goal-name').value.trim();const target=parseEuros($('goal-amount').value),cause=Number($('goal-cause').value);
+      if(name.length<2||name.length>60){message('Bitte einen Namen mit mindestens 2 Zeichen eingeben.');return}
+      if(!target||target>10000000){message('Bitte ein gültiges Ziel bis 100.000 € eingeben.');return}
+      if(!Number.isInteger(cause)||cause<0||cause>=causes.length)return;
+      if(state.goals.length>=30){message('Maximal 30 Ziele in der Demo.');return}
+      state.goals.push({id:uid(),name,target,raised:0,cause});
+      $('goal-name').value='';$('goal-amount').value='';persist();message('Neues Spendenziel erstellt');
+    }
+    function pdfLiteral(s){
+      // Nur ASCII für garantiert lesbare, plattformunabhängige PDF-Musterbelege.
+      return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ß/g,'ss').replace(/[^ -~]/g,'?').replace(/([\\()])/g,'\\$1');
+    }
+    function downloadReceipt(entry){
+      const amount=(Math.abs(entry.amount||0)/100).toFixed(2).replace('.',',')+' EUR';
+      const cause=causes[entry.causeIndex]?.name||'Spendenzweck';
+      const org=demoOrganizations.find(o=>o.id===entry.organizationId);
+      const lines=[
+        'PFANDTASCHERL 4.0 - MUSTERBELEG / DEMO',
+        '----------------------------------------',
+        `Belegnummer: ${entry.id||'alt'}`,
+        `Datum: ${entry.time||''}`,
+        `Spendenzweck: ${cause}`,
+        `Beispielorganisation: ${org?.name||'Keine ausgewaehlt'}`,
+        `Betrag: ${amount}`,
+        'Status: Ausschliesslich lokal simuliert',
+        'KEINE ECHTE SPENDE / KEIN STEUERBELEG',
+        'Kein Nachweis einer Zahlung an eine Organisation.'
+      ];
+      const stream=['BT','/F1 12 Tf','50 780 Td','16 TL'];
+      lines.forEach((line,i)=>{if(i)stream.push('T*');stream.push(`(${pdfLiteral(line)}) Tj`)});stream.push('ET');
+      const content=stream.join('\n')+'\n';
+      const objects=[
+        '<< /Type /Catalog /Pages 2 0 R >>',
+        '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+        '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>',
+        '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+        `<< /Length ${content.length} >>\nstream\n${content}endstream`
+      ];
+      let pdf='%PDF-1.4\n';const offsets=[0];
+      objects.forEach((obj,i)=>{offsets.push(pdf.length);pdf+=`${i+1} 0 obj\n${obj}\nendobj\n`});
+      const xref=pdf.length;pdf+=`xref\n0 ${objects.length+1}\n0000000000 65535 f \n`;
+      offsets.slice(1).forEach(off=>pdf+=`${String(off).padStart(10,'0')} 00000 n \n`);
+      pdf+=`trailer\n<< /Size ${objects.length+1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+      const blob=new Blob([pdf],{type:'application/pdf'});const url=URL.createObjectURL(blob);
+      const anchor=document.createElement('a');anchor.href=url;anchor.download='PfandTascherl-Musterbeleg-'+String(entry.id||'demo').replace(/[^\w-]/g,'')+'.pdf';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
+    }
+    function initV4(){
+      for(const key of ['auto-cause','goal-cause']){
+        causes.forEach((c,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=c.emoji+' '+c.name;$(key).append(o)});
+      }
+      $('auto-percent').value=String(state.autoPercent);$('auto-cause').value=String(state.autoCause);updateAutoPreview();
+      $('notifications-enabled').checked=state.notificationsEnabled;
+      $('profile-name').value=state.profile?.name||'';$('profile-email').value=state.profile?.email||'';
+      $('cause-search').addEventListener('input',renderCauses);
+      $('org-search').addEventListener('input',renderOrganizations);
+      $('org-favorites-only').addEventListener('click',()=>{orgFavoritesOnly=!orgFavoritesOnly;renderOrganizations()});
+      $('favorites-only').addEventListener('click',()=>{favoriteFilter=!favoriteFilter;renderCauses()});
+      $('goal-form').addEventListener('submit',makeGoal);
+      $('auto-percent').addEventListener('input',updateAutoPreview);
+      $('auto-save').addEventListener('click',saveAuto);
+      $('profile-form').addEventListener('submit',profileSave);
+      $('profile-logout').addEventListener('click',()=>{state.loggedIn=false;persist();message('Demo-Profil abgemeldet')});
+      $('profile-login').addEventListener('click',()=>{state.loggedIn=true;persist();message('Lokales Demo-Profil aktiviert')});
+      $('notifications-enabled').addEventListener('change',()=>{state.notificationsEnabled=$('notifications-enabled').checked;persist()});
+      $('notifications-clear').addEventListener('click',()=>{state.notifications=[];persist();message('Mitteilungen gelöscht')});
+    }
+
+    // Karten- und Standortsuche: OSM Overpass; ohne Serverkonto nutzbare Demo.
+    // Nur explizit als Rückgabeautomat erfasste OSM-Objekte gelten als Automaten.
+    let userPoint=null,placeMap=null,placeLayer=null,leafletLoad=null,placeRequest=null,placesSeq=0;
+    const distanceMeters=(a,b,c,d)=>{
+      const rad=Math.PI/180, dLat=(c-a)*rad, dLon=(d-b)*rad;
+      const v=Math.sin(dLat/2)**2+Math.cos(a*rad)*Math.cos(c*rad)*Math.sin(dLon/2)**2;
+      return 12742000*Math.asin(Math.min(1,Math.sqrt(v)));
+    };
+    const distanceText=meters=>meters<1000?`${Math.round(meters/10)*10} m`:`${(meters/1000).toLocaleString('de-AT',{maximumFractionDigits:1})} km`;
+    const safeCoord=v=>typeof v==='number'&&Number.isFinite(v)&&Math.abs(v)<=180;
+    const textTag=(tags,...keys)=>{
+      for(const k of keys){if(typeof tags?.[k]==='string'&&tags[k].trim())return tags[k].trim().slice(0,100)}
+      return '';
+    };
+    function placesStatus(msg){$('places-status').textContent=msg}
+    function updateSearchLinks(lat,lon){
+      const q=encodeURIComponent('Pfandautomat');
+      $('places-apple-search').href=`https://maps.apple.com/?q=${q}&near=${lat},${lon}`;
+      $('places-google-search').href=`https://www.google.com/maps/search/?api=1&query=${q}&query_place_id=`.replace(/&query_place_id=$/,'') + `&center=${lat},${lon}`;
+    }
+    function loadLeaflet(){
+      if(window.L)return Promise.resolve(window.L);
+      if(leafletLoad)return leafletLoad;
+      leafletLoad=new Promise((resolve,reject)=>{
+        const link=document.createElement('link');link.rel='stylesheet';link.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.append(link);
+        const script=document.createElement('script');script.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';script.async=true;
+        script.onload=()=>window.L?resolve(window.L):reject(new Error('Leaflet fehlt'));
+        script.onerror=()=>reject(new Error('Kartensoftware nicht geladen'));
+        document.head.append(script);
+      }).catch(err=>{leafletLoad=null;throw err});
+      return leafletLoad;
+    }
+    async function updateMap(entries=[]){
+      try{
+        const L=await loadLeaflet();
+        if($('places').hidden)return;
+        if(!placeMap){
+          placeMap=L.map('location-map',{zoomControl:true,scrollWheelZoom:false}).setView([48.2063,16.3848],12);
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap-Mitwirkende</a>'}).addTo(placeMap);
+          placeLayer=L.layerGroup().addTo(placeMap);
+        }
+        placeLayer.clearLayers();
+        const focus=userPoint?[userPoint.lat,userPoint.lon]:[48.2063,16.3848],bounds=[focus];
+        L.circleMarker(focus,{radius:9,color:'#fff',weight:2,fillColor:'#2865c3',fillOpacity:1}).addTo(placeLayer).bindTooltip('Ausgewählter Standort');
+        entries.forEach(place=>{
+          const color=place.type==='machine'?'#0a8361':'#d39935';
+          L.circleMarker([place.lat,place.lon],{radius:8,color:'#fff',weight:2,fillColor:color,fillOpacity:1})
+            .addTo(placeLayer).bindTooltip(place.title);
+          bounds.push([place.lat,place.lon]);
+        });
+        placeMap.invalidateSize();
+        if(bounds.length>1)placeMap.fitBounds(bounds,{padding:[24,24],maxZoom:15});
+        else placeMap.setView(focus,14);
+      }catch{
+        $('location-map').textContent='Kartenvorschau derzeit nicht verfügbar. Die Standortliste und Routenlinks funktionieren trotzdem.';
+        $('location-map').style.height='auto';
+        $('location-map').style.padding='18px';
+      }
+    }
+    function osmUrl(coords,kind){
+      const lat=coords.lat.toFixed(6),lon=coords.lon.toFixed(6);
+      const pattern=kind==='machine'?
+        `nwr["vending"="bottle_return"](around:7000,${lat},${lon});nwr["recycling_type"="reverse_vending_machine"](around:7000,${lat},${lon});`:
+        `nwr["shop"="supermarket"](around:2000,${lat},${lon});`;
+      return `[out:json][timeout:18];(${pattern});out center tags;`;
+    }
+    async function queryOSM(query,signal){
+      const servers=['https://overpass.kumi.systems/api/interpreter','https://overpass-api.de/api/interpreter'];
+      let lastError;
+      for(const base of servers){
+        if(signal.aborted)throw new DOMException('Abgebrochen','AbortError');
+        try{
+          const response=await fetch(base+'?data='+encodeURIComponent(query),{signal,headers:{Accept:'application/json'}});
+          if(!response.ok)throw new Error('Abfrage fehlgeschlagen');
+          const data=await response.json();
+          if(!Array.isArray(data.elements))throw new Error('Unerwartete Standortdaten');
+          return data.elements;
+        }catch(err){lastError=err;if(signal.aborted)throw err}
+      }
+      throw lastError||new Error('Standortdaten nicht erreichbar');
+    }
+    function toPlaces(elements,kind,point){
+      const seen=new Set(),places=[];
+      for(const item of elements){
+        const lat=item.lat??item.center?.lat, lon=item.lon??item.center?.lon;
+        if(!safeCoord(lat)||!safeCoord(lon)||!item.type||item.id==null)continue;
+        const key=`${item.type}:${item.id}`;if(seen.has(key))continue;seen.add(key);
+        const tags=item.tags||{};
+        if(kind==='machine' && !(tags.vending==='bottle_return'||tags.recycling_type==='reverse_vending_machine'))continue;
+        const title=textTag(tags,'name','brand','operator')||(kind==='machine'?'Pfandautomat':'Supermarkt');
+        const street=[textTag(tags,'addr:street'),textTag(tags,'addr:housenumber')].filter(Boolean).join(' ');
+        const district=textTag(tags,'addr:city','addr:suburb');
+        const address=[street,district].filter(Boolean).join(', ');
+        const metres=distanceMeters(point.lat,point.lon,lat,lon);
+        if(!Number.isFinite(metres))continue;
+        places.push({type:kind,title,lat,lon,address,metres,key});
+      }
+      return places.sort((a,b)=>a.metres-b.metres).slice(0,kind==='machine'?8:5);
+    }
+    function linkFor(place){return `https://maps.apple.com/?daddr=${encodeURIComponent(place.lat+','+place.lon)}&dirflg=w`}
+    function addPlaceCard(parent,place,index,nearest=false){
+      const card=document.createElement('div');card.className='place-card'+(nearest?' nearest':'');
+      const head=document.createElement('div');head.className='row';
+      const title=document.createElement('strong');title.textContent=place.title;title.style.fontSize='15px';
+      const badge=document.createElement('span');badge.className='place-number';badge.textContent=distanceText(place.metres);
+      head.append(title,badge);card.append(head);
+      const description=document.createElement('p');description.className='sub';description.style.margin='7px 0';
+      description.textContent=(nearest?'Nächster erfasster Automat · ':'')+(place.type==='machine'?'Als Rückgabeautomat eingetragen':'Supermarkt – Automat nicht bestätigt')+(place.address?' · '+place.address:'');
+      card.append(description);
+      const actions=document.createElement('div');actions.className='place-actions';
+      const apple=document.createElement('a');apple.textContent='🚶 Fußweg in Apple Maps';apple.href=linkFor(place);apple.target='_blank';apple.rel='noopener noreferrer';
+      const google=document.createElement('a');google.textContent='Google Maps';google.href=`https://www.google.com/maps/dir/?api=1&destination=${place.lat},${place.lon}&travelmode=walking`;google.target='_blank';google.rel='noopener noreferrer';
+      actions.append(apple,google);card.append(actions);parent.append(card);
+    }
+    function renderPlaces(machines,stores=[]){
+      const root=$('places-results');root.replaceChildren();
+      const headline=document.createElement('h3');headline.className='muted-title';
+      headline.textContent=machines.length?`${machines.length} erfasste Rückgabeautomaten im Umkreis`:'Keine explizit erfassten Automaten gefunden';root.append(headline);
+      if(machines.length)machines.forEach((p,i)=>addPlaceCard(root,p,i,i===0));
+      else{
+        const info=document.createElement('p');info.className='sub';info.textContent='In OpenStreetMap sind hier derzeit keine Rückgabeautomaten verzeichnet. Das bedeutet nicht, dass es keine Automaten gibt. Nutze die offizielle EWP-App oder die Karten-Suche unten.';root.append(info);
+      }
+      if(stores.length){
+        const storeHeading=document.createElement('h3');storeHeading.className='muted-title';storeHeading.textContent='Weitere mögliche Rückgabestellen';root.append(storeHeading);
+        const note=document.createElement('p');note.className='sub';note.textContent='Diese nahegelegenen Supermärkte sind keine bestätigten Automatenstandorte. Vor Ort prüfen.';root.append(note);
+        stores.forEach((p,i)=>addPlaceCard(root,p,i));
+      }
+      updateMap([...machines,...stores]);
+    }
+    async function findPlaces(point,label){
+      if(placeRequest)placeRequest.abort();
+      const req=new AbortController();placeRequest=req;
+      const seq=++placesSeq;userPoint=point;
+      updateSearchLinks(point.lat,point.lon);
+      placesStatus(`Suche Rückgabeautomaten rund um ${label} …`);
+      $('places-results').replaceChildren();
+      void updateMap([]);
+      const timer=setTimeout(()=>req.abort(),32000);
+      try{
+        // Automaten und zusätzliche Supermärkte getrennt behandeln: niemals Märkte als bestätigte Automaten ausgeben.
+        const [machineResult,storeResult]=await Promise.allSettled([
+          queryOSM(osmUrl(point,'machine'),req.signal),
+          queryOSM(osmUrl(point,'store'),req.signal)
+        ]);
+        if(seq!==placesSeq)return;
+        const machines=machineResult.status==='fulfilled'?toPlaces(machineResult.value,'machine',point):[];
+        const stores=storeResult.status==='fulfilled'?toPlaces(storeResult.value,'store',point):[];
+        renderPlaces(machines,stores);
+        if(machineResult.status==='rejected'&&storeResult.status==='rejected')placesStatus(`Standortsuche gerade nicht erreichbar. Die Karte und Links zur offiziellen EWP-App können weiterhin verwendet werden.`);
+        else placesStatus(`Suchgebiet: ${label} · ${machines.length} erfasste Automaten innerhalb von 7 km${stores.length?' · '+stores.length+' mögliche Rückgabestellen in der Nähe':''}.`);
+      }finally{clearTimeout(timer)}
+    }
+    function demoLocation(){
+      const coords=$('places-preset').value.split(',').map(Number);
+      if(coords.length!==2||!coords.every(Number.isFinite))return;
+      const label=$('places-preset').selectedOptions[0].textContent;
+      findPlaces({lat:coords[0],lon:coords[1]},label).catch(()=>placesStatus('Die Standortsuche ist derzeit nicht verfügbar.')); 
+    }
+    function nearbyLocation(){
+      if(!navigator.geolocation){placesStatus('Standortfreigabe nicht unterstützt. Wähle bitte einen Teststandort.');return}
+      placesStatus('Standort wird angefragt … Bitte erlaube die Freigabe im Browser.');
+      navigator.geolocation.getCurrentPosition(
+        pos=>findPlaces({lat:pos.coords.latitude,lon:pos.coords.longitude},'deinen Standort').catch(()=>placesStatus('Standortsuche fehlgeschlagen. Bitte versuche einen Teststandort.')),
+        err=>placesStatus(`Standort konnte nicht ermittelt werden (${err.code===1?'Zugriff verweigert':err.code===3?'Zeitüberschreitung':'nicht verfügbar'}). Du kannst einen Teststandort in Wien auswählen.`),
+        {enableHighAccuracy:true,timeout:12000,maximumAge:30000}
+      );
+    }
+    $('places-geolocate').addEventListener('click',nearbyLocation);
+    $('places-demo').addEventListener('click',demoLocation);
+
+    document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));
+    document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.goto)));
+    document.querySelectorAll('[data-donation-preset]').forEach(b=>b.addEventListener('click',()=>{
+      const p=b.dataset.donationPreset;
+      $('donate-amount').value=p==='all'?(state.balance/100).toFixed(2).replace('.',','):Number(p).toFixed(2).replace('.',',');
+      $('donation-success').hidden=true;
+    }));
+    $('add-demo').addEventListener('click',()=>redeem('DEMO-'+Date.now()+'-'+Math.floor(Math.random()*10000),250));
+    $('redeem-qr').addEventListener('click',()=>parseCode($('qr').value));
+    $('donation-form').addEventListener('submit',doDonation);
+    $('withdraw-form').addEventListener('submit',doWithdrawal);
+    $('fill-demo-iban').addEventListener('click',()=>{$('withdraw-iban').value='AT61 1904 3002 3457 3201'});
+    $('all-withdraw').addEventListener('click',()=>{$('withdraw-amount').value=(state.balance/100).toFixed(2).replace('.',',')});
+    $('reset').addEventListener('click',resetDemo);
+    $('camera-start').addEventListener('click',startCamera);
+    $('camera-stop').addEventListener('click',stopCamera);
+    initV4();render();
+    if ('serviceWorker' in navigator && location.protocol === 'https:') {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    }
+  </script>
+</body>
+</html>
